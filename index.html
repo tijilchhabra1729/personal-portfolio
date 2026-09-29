@@ -77,7 +77,31 @@ h1 em { color: var(--acid); letter-spacing: -.02em; }
 .hero-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-top: 40px; }
 .hero-foot p { max-width: 520px; font-size: clamp(17px, 1.6vw, 21px); color: var(--dim); }
 .hero-foot p b { color: var(--text); font-weight: 500; }
-.hint { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+/* T cell card + pac-man game */
+.hero button, .hero aside, .hero .over, .hero .hud { pointer-events: auto; }
+.hero h1, .hero .tag, .hero-foot p { transition: opacity .4s; }
+.hero.playing h1, .hero.playing .tag, .hero.playing .hero-foot { opacity: .08; pointer-events: none; }
+.sim-card { width: min(340px, 100%); padding: 16px 18px; background: rgba(17,17,20,.72); border: 1px solid var(--line); border-radius: 16px; backdrop-filter: blur(10px); font-size: 13px; color: var(--dim); }
+.sim-top { font: 500 13px var(--mono); color: var(--text); display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.live { font-size: 10px; color: var(--acid); border: 1px solid color-mix(in srgb, var(--acid) 40%, transparent); border-radius: 99px; padding: 2px 8px 2px 6px; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); animation: pulse 1.4s infinite; }
+.sim-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 14px; }
+.sim-actions button { font: 500 12px var(--mono); background: var(--acid); color: var(--bg); border: 0; border-radius: 99px; padding: 8px 14px; cursor: pointer; transition: box-shadow .3s, transform .2s; }
+.sim-actions button:hover { box-shadow: 0 0 24px rgba(212,255,58,.45); transform: translateY(-1px); }
+.sim-actions button.ghost { background: none; color: var(--text); border: 1px solid var(--line); }
+.sim-actions a { font: 12px var(--mono); color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); }
+.sim-actions a:hover { color: var(--acid); border-color: var(--acid); }
+.hero > .hud { position: absolute; top: 76px; left: clamp(16px, 4vw, 48px); right: clamp(16px, 4vw, 48px); font-family: var(--mono); }
+.hud-row { display: flex; gap: 28px; font-size: 13px; color: var(--dim); }
+.hud-row b { color: var(--acid); font-weight: 500; font-size: 18px; margin-left: 6px; }
+#hud-lives { color: var(--acid); letter-spacing: 4px; }
+.hud-help { margin-top: 8px; font-size: 11px; color: var(--dim); }
+.hero > .over { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; background: rgba(9,9,11,.55); backdrop-filter: blur(3px); }
+.over[hidden], .hud[hidden] { display: none; }
+.over-k { font: 12px var(--mono); color: var(--violet); letter-spacing: .2em; }
+.over-score { font-size: clamp(36px, 6vw, 64px); font-weight: 700; letter-spacing: -.03em; margin-top: 8px; }
+.over-score b { color: var(--acid); }
+.over-best { font: 12px var(--mono); color: var(--dim); margin-top: 6px; }
 
 /* marquee */
 .marquee { border-block: 1px solid var(--line); overflow: hidden; padding: 18px 0; font-family: var(--mono); font-size: 14px; color: var(--dim); white-space: nowrap; }
@@ -97,6 +121,7 @@ h2 { font-size: clamp(40px, 7vw, 96px); line-height: .95; letter-spacing: -.04em
 .stat .n { font-size: clamp(48px, 5.5vw, 76px); font-weight: 700; letter-spacing: -.04em; line-height: 1; }
 .stat .n sup { color: var(--acid); font-size: .45em; vertical-align: top; }
 .stat p { color: var(--dim); font-size: 14px; margin-top: 12px; }
+.stat .src { font-family: var(--mono); font-size: 11px; color: var(--acid); margin-bottom: 14px; opacity: .85; }
 .stat small { font-family: var(--mono); font-size: 11px; color: var(--violet); display: block; margin-top: 6px; }
 
 /* experience */
@@ -142,7 +167,8 @@ h2 { font-size: clamp(40px, 7vw, 96px); line-height: .95; letter-spacing: -.04em
 
 /* career graph */
 .graph-wrap { position: relative; height: min(78vh, 720px); background: radial-gradient(ellipse at center, #121218, var(--bg) 70%); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
-#career-graph { width: 100%; height: 100%; display: block; cursor: grab; }
+#career-graph { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y pinch-zoom !important; }
+@media (max-width: 760px) { #career-graph .skill-l { display: none; } .graph-wrap { height: 70svh; } .graph-legend button { padding: 4px 8px 4px 6px; } }
 #career-graph text { font-family: var(--mono); fill: var(--text); pointer-events: none; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
 #career-graph line { transition: opacity .2s; }
 #career-graph g.node { transition: opacity .2s; cursor: pointer; }
@@ -170,19 +196,39 @@ h2 { font-size: clamp(40px, 7vw, 96px); line-height: .95; letter-spacing: -.04em
 /* command palette */
 .kbtn { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; cursor: pointer; color: var(--dim); transition: color .2s, border-color .2s; }
 .kbtn:hover { color: var(--text); border-color: var(--dim); }
+.kbtn { display: inline-flex; align-items: center; gap: 6px; }
 .kbtn kbd { font: 12px var(--mono); }
+.kbtn svg { display: none; }
+.coarse { display: none; }
+@media (pointer: coarse) {
+  .kbtn { padding: 7px; border-radius: 99px; }
+  .kbtn kbd { display: none; }
+  .kbtn svg { display: block; }
+  .fine, .pal-foot { display: none !important; }
+  .coarse { display: inline; }
+}
+#palette:focus { outline: none; }
 #palette { margin: 14vh auto auto; width: min(560px, calc(100% - 32px)); background: rgba(17,17,20,.96); color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 0; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(212,255,58,.08); }
 #palette::backdrop { background: rgba(9,9,11,.6); backdrop-filter: blur(6px); }
 #palette[open] { animation: pop .18s cubic-bezier(.2,.8,.2,1); }
 @keyframes pop { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
-#pal-q { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 18px 20px; font: 16px var(--mono); color: var(--text); outline: none; }
+.pal-head { display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+.pal-x { background: none; border: 0; color: var(--dim); font-size: 16px; padding: 0 18px; align-self: stretch; cursor: pointer; }
+.pal-x:hover { color: var(--text); }
+#pal-q { flex: 1; min-width: 0; background: none; border: 0; padding: 18px 20px; font: 16px var(--mono); color: var(--text); outline: none; }
 #pal-q::placeholder { color: var(--dim); }
 #pal-list { list-style: none; max-height: 320px; overflow-y: auto; padding: 8px; }
-#pal-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-size: 15px; }
+#pal-list li { min-height: 44px; align-items: center; display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-size: 15px; }
 #pal-list li small { font: 11px var(--mono); color: var(--dim); }
 #pal-list li[aria-selected=true] { background: color-mix(in srgb, var(--acid) 12%, transparent); color: var(--acid); }
 #pal-list li.empty { color: var(--dim); cursor: default; }
 .pal-foot { display: flex; gap: 16px; padding: 10px 20px; border-top: 1px solid var(--line); font: 11px var(--mono); color: var(--dim); }
+@media (max-width: 640px) {
+  #palette { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 20px 20px 0 0; border-bottom: 0; max-height: 80svh; padding-bottom: env(safe-area-inset-bottom); }
+  #palette[open] { animation: sheet .25s cubic-bezier(.2,.8,.2,1); }
+  #pal-list { max-height: 55svh; }
+}
+@keyframes sheet { from { transform: translateY(100%); } }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; z-index: 60; background: var(--acid); color: var(--bg); font: 500 13px var(--mono); padding: 10px 16px; border-radius: 99px; transition: opacity .25s, transform .25s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -235,7 +281,7 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
     <li><a href="#projects" data-scramble>projects</a></li>
     <li><a href="#graph" data-scramble>graph</a></li>
     <li><a href="#stack" data-scramble>stack</a></li>
-    <li class="k-li"><button class="kbtn" type="button" aria-label="Open command palette"><kbd>⌘K</kbd></button></li>
+    <li class="k-li"><button class="kbtn" type="button" aria-label="Search and jump"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><kbd>⌘K</kbd></button></li>
     <li><a class="cta" href="#contact"><span class="dot"></span><span data-scramble>let's talk</span><span class="arr" aria-hidden="true">→</span></a></li>
   </ul>
 </nav>
@@ -246,7 +292,24 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
   <h1><span class="row"><span>Tijil</span></span><span class="row"><span><em>Chhabra</em></span></span></h1>
   <div class="hero-foot">
     <p>I build <b>ML systems</b>, <b>agent pipelines</b>, and <b>data products</b>. Three internships in, the ones I'm proudest of are the ones that <b>refuse to make things up.</b></p>
-    <span class="hint">↖ move your cursor. the swarm follows.</span>
+    <aside class="sim-card">
+      <div class="sim-top"><span class="live">live</span> T Cell Swarm Sim</div>
+      <p>This swarm runs in your browser on the same rules as my hackathon simulation: self-propulsion, Vicsek alignment, and chemotaxis toward your cursor.</p>
+      <div class="sim-actions">
+        <button type="button" id="play">▶ Play the pathogen</button>
+        <a href="#projects" id="sim-link">See the project ↓</a>
+      </div>
+    </aside>
+  </div>
+  <div class="hud" id="hud" hidden>
+    <div class="hud-row"><span>SCORE <b id="hud-score">0</b></span><span>BEST <b id="hud-best">0</b></span><span id="hud-lives"></span></div>
+    <div class="hud-help">You're the pathogen. Eat T cells head-on; a hit from behind costs a life. <span class="fine">Steer with your cursor or the arrow keys. Esc to quit.</span><span class="coarse">Drag your finger to steer.</span></div>
+  </div>
+  <div class="over" id="over" hidden>
+    <div class="over-k">SWARM CONTAINED YOU</div>
+    <div class="over-score"><b id="over-score">0</b> T cells eaten</div>
+    <div class="over-best" id="over-best"></div>
+    <div class="sim-actions"><button type="button" id="again">▶ Play again</button><button type="button" id="quit" class="ghost">Quit</button></div>
   </div>
 </header>
 
@@ -256,15 +319,17 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
 </div></div>
 
 <section>
-  <div class="eyebrow reveal"><b>01</b> / by the numbers</div>
+  <div class="eyebrow reveal"><b>01</b> / shipped output</div>
   <h2 class="reveal">Receipts, <em>not</em> vibes.</h2>
   <div class="stats reveal">
-    <div class="stat"><div class="n"><span data-count="1000">0</span><sup>+</sup></div><p>DataHacks registrations, 450 hackers from 70+ universities</p></div>
-    <div class="stat"><div class="n">$<span data-count="90">0</span>K</div><p>in sponsorship secured for San Diego's largest hackathon</p></div>
-    <div class="stat"><div class="n"><span data-count="33">0</span></div><p>nudges in the agentic BFSI catalogue at PwC, scaled from 10 at launch</p></div>
-    <div class="stat"><div class="n">40–50<sup>%</sup></div><p>less manual data entry after shipping an OCR service to production</p></div>
-    <div class="stat"><div class="n"><span data-count="244">0</span></div><p>passing tests in Portfolio Manager, hermetic suite in ~14s</p></div>
-    <div class="stat"><div class="n"><span data-count="0">0</span></div><p>hallucinated products from the grounded recommender</p><small>offline eval · demo customer dataset</small></div>
+    <div class="stat"><div class="src">Lawgical · Document AI + Claude</div><div class="n">+6–10<sup>pts</sup></div><p>OCR accuracy from an LLM post-processing stage, on top of a 90%+ baseline across 6 document types</p></div>
+    <div class="stat"><div class="src">Lawgical · Next.js + Express</div><div class="n">40–50<sup>%</sup></div><p>less manual data entry after shipping a full-stack OCR service to production</p></div>
+    <div class="stat"><div class="src">Lawgical · Claude Opus</div><div class="n"><span data-count="10">0</span><sup>+</sup></div><p>US visa document types auto-labeled by a classification service, replacing manual sorting</p></div>
+    <div class="stat"><div class="src">PwC · LangGraph + Postgres</div><div class="n"><span data-count="33">0</span></div><p>nudges on a multi-agent BFSI platform, scaled from 10 through 7 reusable capability packs</p></div>
+    <div class="stat"><div class="src">PwC · Python + RAG</div><div class="n"><span data-count="0">0</span></div><p>hallucinated products from a grounded recommender with fail-closed eligibility and 35/35 tests passing</p><small>offline eval · demo customer dataset</small></div>
+    <div class="stat"><div class="src">DGLiger · Databricks, FAISS, Prophet</div><div class="n"><span data-count="3">0</span></div><p>data services in one internship: bank ETL pipelines, vector-similarity targeting, and cashflow forecasting</p></div>
+    <div class="stat"><div class="src">Portfolio Manager · FastAPI + Postgres</div><div class="n"><span data-count="244">0</span></div><p>passing tests across a FIFO ledger, live pricing, and LangGraph agents</p></div>
+    <div class="stat"><div class="src">Recipe Ratings · scikit-learn</div><div class="n">0→12<sup>%</sup></div><p>minority-class recall from a class-balanced Random Forest tuned with 5-fold GridSearchCV</p></div>
   </div>
 </section>
 
@@ -429,7 +494,7 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
     <div class="graph-tip" id="graph-tip" hidden></div>
     <div class="graph-legend" id="graph-legend"></div>
   </div>
-  <p class="graph-cap reveal">I built this with <a href="https://github.com/Graphify-Labs/graphify" target="_blank" rel="noopener">graphify</a> from my career database, using only verified facts: <span id="graph-stats"></span>. Hover to trace, click a node to jump to it, drag to play. Dashed lines are inferred links.</p>
+  <p class="graph-cap reveal">I built this with <a href="https://github.com/Graphify-Labs/graphify" target="_blank" rel="noopener">graphify</a> from my career database, using only verified facts: <span id="graph-stats"></span>. <span class="fine">Hover to trace, click a node to jump to it, drag to play.</span><span class="coarse">Tap a node to trace it, tap again to jump there, pinch to zoom.</span> Dashed lines are inferred links.</p>
 </section>
 
 <section id="stack" data-node="__skill">
@@ -479,8 +544,8 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
   </div>
 </section>
 
-<dialog id="palette" aria-label="Command palette">
-  <input id="pal-q" type="text" placeholder="Jump to, copy, open…" autocomplete="off" aria-controls="pal-list">
+<dialog id="palette" aria-label="Search and jump" tabindex="-1">
+  <div class="pal-head"><input id="pal-q" type="text" placeholder="Jump to, copy, open…" autocomplete="off" aria-controls="pal-list"><button type="button" class="pal-x" aria-label="Close">✕</button></div>
   <ul id="pal-list" role="listbox"></ul>
   <div class="pal-foot"><span>↑↓ navigate</span><span>↵ select</span><span>esc close</span></div>
 </dialog>
@@ -490,39 +555,124 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
 <script type="application/json" id="graph-data">{"communities":{"0":"Agents & grounded AI","1":"Foundations","2":"Data pipelines","3":"NLP & statistics","4":"Document AI","5":"Fintech ML","6":"Simulation"},"nodes":[{"id":"tijil_chhabra","label":"Tijil Chhabra","kind":"person","blurb":"Data Science @ UC San Diego, class of 2028","c":1,"deg":13},{"id":"pwc","label":"PwC","kind":"role","blurb":"SWE Intern (AI/ML) \u00b7 Jun\u2013Aug 2026","c":0,"deg":3},{"id":"lawgical","label":"Lawgical","kind":"role","blurb":"Software Engineer Intern (AI/ML) \u00b7 Jul\u2013Sep 2025","c":4,"deg":3},{"id":"dgliger","label":"DGLiger","kind":"role","blurb":"Data Science Intern \u00b7 Jul\u2013Sep 2024","c":5,"deg":4},{"id":"datahacks","label":"DataHacks","kind":"role","blurb":"Director, DS3 @ UCSD \u00b7 1000+ registrations, $90K raised","c":1,"deg":1},{"id":"uc_san_diego","label":"UC San Diego","kind":"school","blurb":"Bachelor's, Data Science \u00b7 2024\u20132028","c":1,"deg":4},{"id":"aws_cloud_practitioner","label":"AWS Cloud Practitioner","kind":"cert","blurb":"Verified on Credly","c":1,"deg":2},{"id":"agentic_nudge_platform","label":"Agentic Nudge Platform","kind":"build","blurb":"Multi-agent BFSI platform \u00b7 33 nudges, admin + customer surfaces","c":0,"deg":7},{"id":"grounded_recommender","label":"Grounded Recommender","kind":"build","blurb":"Fail-closed, grounded product engine \u00b7 0 hallucinated products (offline eval)","c":0,"deg":7},{"id":"ocr_service","label":"OCR Service","kind":"build","blurb":"Next.js + Express in production \u00b7 40\u201350% less manual entry","c":4,"deg":7},{"id":"visa_doc_classifier","label":"Visa Doc Classifier","kind":"build","blurb":"Claude Opus \u00b7 10+ US visa document types","c":4,"deg":2},{"id":"bank_etl_pipelines","label":"Bank ETL Pipelines","kind":"build","blurb":"Databricks schemas + ETL for a Data-as-a-Service initiative","c":2,"deg":4},{"id":"customer_targeting","label":"Customer Targeting","kind":"build","blurb":"FAISS vector similarity for merchant partners","c":5,"deg":4},{"id":"cashflow_forecasting","label":"Cashflow Forecasting","kind":"build","blurb":"Prophet SME liquidity forecasts","c":5,"deg":3},{"id":"portfolio_manager","label":"Portfolio Manager","kind":"build","blurb":"Live \u00b7 FIFO ledger, LangGraph agents, 244 tests","c":0,"deg":12},{"id":"t_cell_swarm_sim","label":"T Cell Swarm Sim","kind":"build","blurb":"Wrote the engine \u00b7 4-person hackathon team, <24h","c":6,"deg":5},{"id":"tweetguard","label":"TweetGuard","kind":"build","blurb":"BiLSTM hate speech detection \u00b7 7% positive class","c":3,"deg":8},{"id":"recipe_ratings","label":"Recipe Ratings","kind":"build","blurb":"Permutation tests \u00b7 p = 0.072","c":3,"deg":7},{"id":"solesavings","label":"SoleSavings","kind":"build","blurb":"Plugin-style sneaker price scrapers","c":2,"deg":7},{"id":"dsc_80","label":"DSC 80","kind":"school","blurb":"Practice & Application of Data Science","c":1,"deg":2},{"id":"dsc_30","label":"DSC 30","kind":"school","blurb":"Data Structures & Algorithms (Java)","c":1,"deg":2},{"id":"dsc_100","label":"DSC 100","kind":"school","blurb":"Database Systems","c":0,"deg":3},{"id":"grounding_over_guessing","label":"Grounding over guessing","kind":"idea","blurb":"Never ship a fabricated product, price, or number","c":0,"deg":3},{"id":"multi_agent_orchestration","label":"Multi-agent orchestration","kind":"idea","blurb":"Orchestrator / worker / validator","c":0,"deg":2},{"id":"class_imbalance","label":"Class imbalance","kind":"idea","blurb":"PR-curve thresholds, class-balanced models","c":3,"deg":2},{"id":"hypothesis_testing","label":"Hypothesis testing","kind":"idea","blurb":"Permutation tests, missingness analysis","c":3,"deg":1},{"id":"test_discipline","label":"Test discipline","kind":"idea","blurb":"Hermetic suites, limit tests, green builds","c":6,"deg":3},{"id":"python","label":"Python","kind":"skill","blurb":"","c":5,"deg":9},{"id":"sql","label":"SQL","kind":"skill","blurb":"","c":2,"deg":3},{"id":"javascript","label":"JavaScript","kind":"skill","blurb":"","c":1,"deg":1},{"id":"java","label":"Java","kind":"skill","blurb":"","c":1,"deg":1},{"id":"r","label":"R","kind":"skill","blurb":"","c":1,"deg":1},{"id":"langgraph","label":"LangGraph","kind":"skill","blurb":"","c":0,"deg":2},{"id":"claude_api","label":"Claude API","kind":"skill","blurb":"","c":4,"deg":4},{"id":"rag","label":"RAG","kind":"skill","blurb":"","c":0,"deg":1},{"id":"faiss","label":"FAISS","kind":"skill","blurb":"","c":5,"deg":1},{"id":"gcp_document_ai","label":"GCP Document AI","kind":"skill","blurb":"","c":4,"deg":1},{"id":"prophet","label":"Prophet","kind":"skill","blurb":"","c":5,"deg":1},{"id":"databricks","label":"Databricks","kind":"skill","blurb":"","c":2,"deg":1},{"id":"pyspark","label":"PySpark","kind":"skill","blurb":"","c":2,"deg":1},{"id":"tensorflow_keras","label":"TensorFlow / Keras","kind":"skill","blurb":"","c":3,"deg":1},{"id":"scikit_learn","label":"scikit-learn","kind":"skill","blurb":"","c":3,"deg":2},{"id":"nltk","label":"NLTK","kind":"skill","blurb":"","c":3,"deg":1},{"id":"glove","label":"GloVe","kind":"skill","blurb":"","c":3,"deg":1},{"id":"pandas","label":"pandas","kind":"skill","blurb":"","c":3,"deg":2},{"id":"numpy","label":"NumPy","kind":"skill","blurb":"","c":6,"deg":1},{"id":"matplotlib","label":"Matplotlib","kind":"skill","blurb":"","c":6,"deg":1},{"id":"fastapi","label":"FastAPI","kind":"skill","blurb":"","c":0,"deg":1},{"id":"flask","label":"Flask","kind":"skill","blurb":"","c":2,"deg":1},{"id":"next_js","label":"Next.js","kind":"skill","blurb":"","c":4,"deg":1},{"id":"express","label":"Express","kind":"skill","blurb":"","c":4,"deg":1},{"id":"postgresql","label":"PostgreSQL","kind":"skill","blurb":"","c":0,"deg":3},{"id":"sqlite","label":"SQLite","kind":"skill","blurb":"","c":2,"deg":1},{"id":"sqlalchemy","label":"SQLAlchemy","kind":"skill","blurb":"","c":0,"deg":1},{"id":"docker","label":"Docker","kind":"skill","blurb":"","c":0,"deg":1},{"id":"supabase","label":"Supabase","kind":"skill","blurb":"","c":0,"deg":1},{"id":"gcp","label":"GCP","kind":"skill","blurb":"","c":4,"deg":1},{"id":"beautifulsoup","label":"BeautifulSoup","kind":"skill","blurb":"","c":2,"deg":1},{"id":"selenium","label":"Selenium","kind":"skill","blurb":"","c":2,"deg":1},{"id":"aws","label":"AWS","kind":"skill","blurb":"","c":1,"deg":1}],"links":[{"source":"tijil_chhabra","target":"aws_cloud_practitioner","inferred":false},{"source":"tijil_chhabra","target":"datahacks","inferred":false},{"source":"tijil_chhabra","target":"dgliger","inferred":false},{"source":"tijil_chhabra","target":"javascript","inferred":false},{"source":"tijil_chhabra","target":"lawgical","inferred":false},{"source":"tijil_chhabra","target":"portfolio_manager","inferred":false},{"source":"tijil_chhabra","target":"pwc","inferred":false},{"source":"tijil_chhabra","target":"r","inferred":false},{"source":"tijil_chhabra","target":"recipe_ratings","inferred":false},{"source":"tijil_chhabra","target":"solesavings","inferred":false},{"source":"tijil_chhabra","target":"t_cell_swarm_sim","inferred":false},{"source":"tijil_chhabra","target":"tweetguard","inferred":false},{"source":"tijil_chhabra","target":"uc_san_diego","inferred":false},{"source":"pwc","target":"agentic_nudge_platform","inferred":false},{"source":"pwc","target":"grounded_recommender","inferred":false},{"source":"lawgical","target":"ocr_service","inferred":false},{"source":"lawgical","target":"visa_doc_classifier","inferred":false},{"source":"dgliger","target":"bank_etl_pipelines","inferred":false},{"source":"dgliger","target":"cashflow_forecasting","inferred":false},{"source":"dgliger","target":"customer_targeting","inferred":false},{"source":"uc_san_diego","target":"dsc_100","inferred":false},{"source":"uc_san_diego","target":"dsc_30","inferred":false},{"source":"uc_san_diego","target":"dsc_80","inferred":false},{"source":"aws_cloud_practitioner","target":"aws","inferred":false},{"source":"agentic_nudge_platform","target":"claude_api","inferred":false},{"source":"agentic_nudge_platform","target":"langgraph","inferred":false},{"source":"agentic_nudge_platform","target":"multi_agent_orchestration","inferred":false},{"source":"agentic_nudge_platform","target":"postgresql","inferred":false},{"source":"agentic_nudge_platform","target":"python","inferred":false},{"source":"agentic_nudge_platform","target":"grounded_recommender","inferred":false},{"source":"grounded_recommender","target":"customer_targeting","inferred":true},{"source":"grounded_recommender","target":"grounding_over_guessing","inferred":false},{"source":"grounded_recommender","target":"python","inferred":false},{"source":"grounded_recommender","target":"rag","inferred":false},{"source":"grounded_recommender","target":"test_discipline","inferred":false},{"source":"ocr_service","target":"claude_api","inferred":false},{"source":"ocr_service","target":"express","inferred":false},{"source":"ocr_service","target":"gcp","inferred":false},{"source":"ocr_service","target":"gcp_document_ai","inferred":false},{"source":"ocr_service","target":"grounding_over_guessing","inferred":true},{"source":"ocr_service","target":"next_js","inferred":false},{"source":"visa_doc_classifier","target":"claude_api","inferred":false},{"source":"bank_etl_pipelines","target":"databricks","inferred":false},{"source":"bank_etl_pipelines","target":"pyspark","inferred":false},{"source":"bank_etl_pipelines","target":"sql","inferred":false},{"source":"customer_targeting","target":"faiss","inferred":false},{"source":"customer_targeting","target":"python","inferred":false},{"source":"cashflow_forecasting","target":"prophet","inferred":false},{"source":"cashflow_forecasting","target":"python","inferred":false},{"source":"portfolio_manager","target":"claude_api","inferred":false},{"source":"portfolio_manager","target":"docker","inferred":false},{"source":"portfolio_manager","target":"fastapi","inferred":false},{"source":"portfolio_manager","target":"grounding_over_guessing","inferred":false},{"source":"portfolio_manager","target":"langgraph","inferred":false},{"source":"portfolio_manager","target":"multi_agent_orchestration","inferred":false},{"source":"portfolio_manager","target":"postgresql","inferred":false},{"source":"portfolio_manager","target":"python","inferred":false},{"source":"portfolio_manager","target":"sqlalchemy","inferred":false},{"source":"portfolio_manager","target":"supabase","inferred":false},{"source":"portfolio_manager","target":"test_discipline","inferred":false},{"source":"t_cell_swarm_sim","target":"matplotlib","inferred":false},{"source":"t_cell_swarm_sim","target":"numpy","inferred":false},{"source":"t_cell_swarm_sim","target":"python","inferred":false},{"source":"t_cell_swarm_sim","target":"test_discipline","inferred":false},{"source":"tweetguard","target":"class_imbalance","inferred":false},{"source":"tweetguard","target":"glove","inferred":false},{"source":"tweetguard","target":"nltk","inferred":false},{"source":"tweetguard","target":"pandas","inferred":false},{"source":"tweetguard","target":"python","inferred":false},{"source":"tweetguard","target":"scikit_learn","inferred":false},{"source":"tweetguard","target":"tensorflow_keras","inferred":false},{"source":"recipe_ratings","target":"class_imbalance","inferred":false},{"source":"recipe_ratings","target":"dsc_80","inferred":false},{"source":"recipe_ratings","target":"hypothesis_testing","inferred":false},{"source":"recipe_ratings","target":"pandas","inferred":false},{"source":"recipe_ratings","target":"python","inferred":false},{"source":"recipe_ratings","target":"scikit_learn","inferred":false},{"source":"solesavings","target":"beautifulsoup","inferred":false},{"source":"solesavings","target":"flask","inferred":false},{"source":"solesavings","target":"python","inferred":false},{"source":"solesavings","target":"selenium","inferred":false},{"source":"solesavings","target":"sql","inferred":false},{"source":"solesavings","target":"sqlite","inferred":false},{"source":"dsc_30","target":"java","inferred":false},{"source":"dsc_100","target":"postgresql","inferred":false},{"source":"dsc_100","target":"sql","inferred":false}]}</script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
-// Swarm: self-propelled particles + Vicsek-style alignment + chemotaxis toward the cursor.
+// Swarm: self-propelled particles + Vicsek-style alignment + chemotaxis, the same rules as
+// the T Cell Swarming Simulation. Play mode adds a pathogen (Pac-Man) the T cells hunt, and
+// receptor desensitization so cells that sit near it lose interest, as in the real model.
 (() => {
-  const c = document.getElementById('swarm'), g = c.getContext('2d');
+  const c = document.getElementById('swarm'), g = c.getContext('2d'), hero = c.parentElement;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W, H, ps = [], mx = -1, my = -1, t = 0;
-  const N = innerWidth < 760 ? 90 : 220, R = 40, SPEED = 1.4;
-  const size = () => { const d = devicePixelRatio || 1; W = c.width = c.offsetWidth * d; H = c.height = c.offsetHeight * d; g.scale(d, d); W /= d; H /= d; };
+  const $ = id => document.getElementById(id);
+  let W, H, ps = [], mx = -1, my = -1, t = 0, visible = true, looping = false;
+  const N = innerWidth < 760 ? 90 : 220, R = 40;
+  const size = () => { const d = devicePixelRatio || 1; W = c.offsetWidth; H = c.offsetHeight; c.width = W * d; c.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
   size(); addEventListener('resize', size);
-  for (let i = 0; i < N; i++) ps.push({ x: Math.random() * W, y: Math.random() * H, a: Math.random() * 6.28 });
-  c.parentElement.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
-  c.parentElement.addEventListener('pointerleave', () => { mx = -1; });
+  const spawnEdge = p => {
+    const side = Math.random() * 4 | 0;
+    p.x = side === 0 ? 0 : side === 1 ? W : Math.random() * W;
+    p.y = side === 2 ? 0 : side === 3 ? H : Math.random() * H;
+    p.s = 1;
+  };
+  for (let i = 0; i < N; i++) ps.push({ x: Math.random() * W, y: Math.random() * H, a: Math.random() * 6.28, s: 1 });
+  hero.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+  hero.addEventListener('pointerleave', () => { mx = -1; });
+
+  // --- game state
+  const game = { on: false, over: false, score: 0, lives: 3, hurt: 0, frame: 0, pac: { x: 0, y: 0, a: 0, r: 16 } };
+  const keys = new Set();
+  let best = 0;
+  try { best = +localStorage.getItem('pacman-best') || 0; } catch {}
+  const hud = () => {
+    $('hud-score').textContent = game.score; $('hud-best').textContent = best;
+    $('hud-lives').textContent = '●'.repeat(game.lives) + '○'.repeat(3 - game.lives);
+  };
+  const start = () => {
+    Object.assign(game, { on: true, over: false, score: 0, lives: 3, hurt: 60, frame: 0 });
+    Object.assign(game.pac, { x: W / 2, y: H / 2, a: 0 });
+    ps.forEach(spawnEdge);
+    hero.classList.add('playing'); c.style.touchAction = 'none';
+    $('hud').hidden = false; $('over').hidden = true; hud();
+    hero.scrollIntoView({ behavior: 'smooth' });
+    kick();
+  };
+  const stop = () => {
+    game.on = game.over = false;
+    hero.classList.remove('playing'); c.style.touchAction = '';
+    $('hud').hidden = $('over').hidden = true;
+  };
+  const end = () => {
+    game.over = true;
+    if (game.score > best) { best = game.score; try { localStorage.setItem('pacman-best', best); } catch {} }
+    $('over-score').textContent = game.score;
+    $('over-best').textContent = game.score && game.score === best ? 'New best!' : `Best: ${best}`;
+    $('hud').hidden = true; $('over').hidden = false;
+    $('again').focus();
+  };
+  $('play').onclick = start; $('again').onclick = start; $('quit').onclick = stop;
+  $('sim-link').onclick = e => { if (jumpToNode('t_cell_swarm_sim')) e.preventDefault(); };
+  addEventListener('keydown', e => {
+    if (!game.on) return;
+    if (e.key === 'Escape') return stop();
+    if (/^(Arrow|[wasd]$)/i.test(e.key) && !game.over) { keys.add(e.key.toLowerCase()); e.preventDefault(); }
+  });
+  addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+
+  const angDiff = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+  function movePac() {
+    const P = game.pac, sp = 3.4;
+    let vx = (keys.has('arrowright') || keys.has('d')) - (keys.has('arrowleft') || keys.has('a'));
+    let vy = (keys.has('arrowdown') || keys.has('s')) - (keys.has('arrowup') || keys.has('w'));
+    if (!vx && !vy && mx >= 0) { const dx = mx - P.x, dy = my - P.y, d = Math.hypot(dx, dy); if (d > 6) { vx = dx / d; vy = dy / d; } }
+    const m = Math.hypot(vx, vy);
+    if (m) { P.x += vx / m * sp; P.y += vy / m * sp; P.a = Math.atan2(vy, vx); }
+    P.x = Math.max(P.r, Math.min(W - P.r, P.x)); P.y = Math.max(P.r + 60, Math.min(H - P.r, P.y));
+  }
+  function drawPac() {
+    const P = game.pac;
+    if (game.hurt > 0 && (game.hurt >> 3) % 2) return;  // blink while invulnerable
+    const open = .12 + .28 * Math.abs(Math.sin(game.frame * .25));
+    g.save(); g.shadowColor = '#d4ff3a'; g.shadowBlur = 24; g.fillStyle = '#d4ff3a';
+    g.beginPath(); g.moveTo(P.x, P.y); g.arc(P.x, P.y, P.r, P.a + open * Math.PI, P.a - open * Math.PI + 2 * Math.PI); g.closePath(); g.fill();
+    g.restore();
+    g.fillStyle = '#09090b'; g.beginPath();
+    g.arc(P.x + Math.cos(P.a - 1.4) * P.r * .5, P.y + Math.sin(P.a - 1.4) * P.r * .5, 2.2, 0, 7); g.fill();
+  }
+
   function step() {
-    t += .005;
-    // no cursor → a wandering attractor keeps things alive
-    const tx = mx >= 0 ? mx : W * (.6 + .25 * Math.cos(t)), ty = mx >= 0 ? my : H * (.4 + .2 * Math.sin(t * 1.7));
+    if (!visible) { looping = false; return; }
+    t += .005; game.frame++;
+    const playing = game.on && !game.over;
+    if (playing) movePac();
+    // target: the pathogen when playing, else the cursor, else a wandering attractor
+    const tx = playing ? game.pac.x : mx >= 0 ? mx : W * (.6 + .25 * Math.cos(t));
+    const ty = playing ? game.pac.y : mx >= 0 ? my : H * (.4 + .2 * Math.sin(t * 1.7));
+    const SPEED = playing ? 1.5 + Math.min(1.3, game.frame / 1500) : 1.4;
     g.fillStyle = 'rgba(9,9,11,.22)'; g.fillRect(0, 0, W, H);
     for (const p of ps) {
       // ponytail: O(n²) neighbor scan, fine at n≤220; spatial grid if N grows
       let sx = 0, sy = 0;
       for (const q of ps) { const dx = q.x - p.x, dy = q.y - p.y; if (dx * dx + dy * dy < R * R) { sx += Math.cos(q.a); sy += Math.sin(q.a); } }
       const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy) + 1;
-      const pull = Math.min(1.2, 160 / d);
-      const ax = sx + pull * dx / d * 3, ay = sy + pull * dy / d * 3;
-      p.a = Math.atan2(ay, ax) + (Math.random() - .5) * .6;
+      if (playing) p.s = d < 140 ? Math.max(.1, p.s - .006) : Math.min(1, p.s + .002);  // desensitization
+      const pull = Math.min(1.2, 160 / d) * (playing ? p.s * 1.15 : 1);
+      p.a = Math.atan2(sy + pull * dy / d * 3, sx + pull * dx / d * 3) + (Math.random() - .5) * .6;
       p.x = (p.x + Math.cos(p.a) * SPEED + W) % W; p.y = (p.y + Math.sin(p.a) * SPEED + H) % H;
+      if (playing && d < game.pac.r + 4) {
+        const fromFront = angDiff(Math.atan2(p.y - game.pac.y, p.x - game.pac.x), game.pac.a) < 1.2;
+        if (fromFront) { game.score++; spawnEdge(p); hud(); continue; }
+        if (game.hurt <= 0) { game.lives--; game.hurt = 120; hud(); if (!game.lives) end(); }
+      }
       const near = d < 180;
-      g.strokeStyle = near ? 'rgba(212,255,58,.9)' : 'rgba(139,108,255,.45)';
+      g.strokeStyle = near ? `rgba(212,255,58,${playing ? .35 + .6 * p.s : .9})` : 'rgba(139,108,255,.45)';
       g.lineWidth = near ? 1.8 : 1.2;
       g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x - Math.cos(p.a) * 6, p.y - Math.sin(p.a) * 6); g.stroke();
     }
-    if (!still) requestAnimationFrame(step);
+    if (game.on) { game.hurt--; drawPac(); }
+    if (still && !game.on) { looping = false; return; }
+    requestAnimationFrame(step);
   }
-  step();
+  function kick() { if (!looping && visible) { looping = true; requestAnimationFrame(step); } }
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; kick(); }).observe(hero);
+  kick();
 })();
 
 // Career graph (data: graphify over master-career-database.md, verified facts only)
@@ -534,7 +684,7 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
   document.getElementById('graph-stats').textContent = `${nodes.length} nodes, ${links.length} edges, ${Object.keys(communities).length} communities`;
   let W = wrap.clientWidth, H = wrap.clientHeight;
   const g = svg.append('g');
-  const zoom = d3.zoom().scaleExtent([.3, 3]).on('zoom', e => g.attr('transform', e.transform));
+  const zoom = d3.zoom().filter(e => !e.touches || e.touches.length > 1).scaleExtent([.3, 3]).on('zoom', e => g.attr('transform', e.transform));
   svg.call(zoom);
   const fit = () => {
     const b = g.node().getBBox(), k = Math.min(1.2, .92 * Math.min(W / b.width, H / b.height));
@@ -557,7 +707,7 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
   node.append('circle').attr('r', d => R[d.kind]).attr('fill', d => d.kind === 'skill' ? 'var(--bg)' : d.kind === 'person' ? COL[0] : COL[d.c])
     .attr('stroke', d => COL[d.c]).attr('stroke-width', d => d.kind === 'skill' ? 1.5 : 0)
     .style('filter', d => d.kind === 'person' || d.kind === 'role' ? `drop-shadow(0 0 10px ${d.kind === 'person' ? COL[0] : COL[d.c]})` : null);
-  node.append('text').text(d => d.label).attr('x', d => R[d.kind] + 5).attr('y', 4)
+  node.append('text').attr('class', d => d.kind === 'skill' ? 'skill-l' : null).text(d => d.label).attr('x', d => R[d.kind] + 5).attr('y', 4)
     .attr('font-size', d => d.kind === 'person' ? 15 : d.kind === 'skill' ? 10 : 12)
     .attr('opacity', d => d.kind === 'skill' ? .6 : 1);
 
@@ -569,17 +719,26 @@ footer { font-family: var(--mono); font-size: 12px; color: var(--dim); text-alig
         .attr('stroke', l => pred && pred(l.source) && pred(l.target) ? COL[l.source.c] : '#3a3a44');
   };
   node.style('cursor', d => d.kind === 'idea' ? 'default' : 'pointer')
-    .on('click', (e, d) => { if (!e.defaultPrevented) jumpToNode(d.id, d.kind); });
+    .on('click', (e, d) => {
+      if (e.defaultPrevented) return;
+      if (tapped !== d && matchMedia('(pointer: coarse)').matches) { tapped = d; return; }  // first tap previews
+      jumpToNode(d.id, d.kind);
+    });
+  let tapped = null;
   node.on('pointerenter', (e, d) => {
     focus(n => linked(d, n));
     tip.hidden = false;
     tip.innerHTML = `<b></b><span></span>`;
     tip.querySelector('b').textContent = d.label;
     tip.querySelector('span').textContent = d.blurb || `${d.kind} · ${communities[d.c]}`;
-  }).on('pointermove', e => {
+    placeTip(e);
+  }).on('pointermove', placeTip)
+    .on('pointerleave', e => { if (e.pointerType !== 'touch') { focus(null); tip.hidden = true; } });  // touch: keep the preview up
+  function placeTip(e) {
     const r = wrap.getBoundingClientRect();
-    tip.style.left = Math.min(e.clientX - r.left + 16, W - 280) + 'px'; tip.style.top = e.clientY - r.top + 16 + 'px';
-  }).on('pointerleave', () => { focus(null); tip.hidden = true; });
+    tip.style.left = Math.max(8, Math.min(e.clientX - r.left + 16, W - tip.offsetWidth - 8)) + 'px'; tip.style.top = e.clientY - r.top + 16 + 'px';
+  }
+  svg.on('click', e => { if (e.target === svg.node()) { tapped = null; focus(null); tip.hidden = true; } });  // tap empty space to clear
 
   const legend = d3.select('#graph-legend');
   Object.entries(communities).forEach(([c, name]) => {
@@ -651,13 +810,15 @@ function jumpToNode(id, kind) {
       const li = document.createElement('li');
       li.setAttribute('role', 'option'); li.setAttribute('aria-selected', i === sel);
       li.append(label, Object.assign(document.createElement('small'), { textContent: hint }));
-      li.onpointerenter = () => { sel = i; render(); };
+      li.onpointermove = () => { if (sel !== i) { list.children[sel]?.setAttribute('aria-selected', false); sel = i; li.setAttribute('aria-selected', true); } };
       li.onclick = () => run(i);
       return li;
     }) : [Object.assign(document.createElement('li'), { className: 'empty', textContent: 'Nothing matches' })]));
   };
   const run = i => { if (!shown[i]) return; dlg.close(); shown[i][2](); };
-  const show = () => { q.value = ''; sel = 0; render(); dlg.showModal(); q.focus(); };
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const show = () => { q.value = ''; sel = 0; render(); dlg.showModal(); if (!coarse) q.focus(); else dlg.focus(); };
+  dlg.querySelector('.pal-x').onclick = () => dlg.close();
   addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); dlg.open ? dlg.close() : show(); }
   });
